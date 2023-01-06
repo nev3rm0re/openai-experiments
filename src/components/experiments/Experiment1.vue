@@ -1,13 +1,54 @@
-// Generate basic component template
 <template>
-  <div>
-    <h1>Experiment 1</h1>
-    <p>Experiment 1 content goes here</p>
+  <div class="experiment-1">
+    <div class="messages">
+      <!-- message area -->
+    </div>
+    <completions-prompt
+      v-if="localStorageSet"
+      @promptSubmitted="handlePromptSubmitted"
+    />
   </div>
 </template>
+
 <script>
+import CompletionsPrompt from "../CompletionsPrompt.vue";
+
 export default {
-  name: "Experiment1"
+  name: "Experiment1",
+  components: {CompletionsPrompt},
+  data() {
+    return {
+      localStorageSet: false,
+      showModal: false,
+      apiKey: ""
+    };
+  },
+  mounted() {
+    this.localStorageSet = !!localStorage.getItem("API_KEY");
+  },
+  methods: {
+    submitAPIKey() {
+      if (this.apiKey) {
+        localStorage.setItem("API_KEY", this.apiKey);
+        this.localStorageSet = true;
+        this.showModal = false;
+      }
+    },
+    deleteAPIKey() {
+      localStorage.removeItem("API_KEY");
+      this.localStorageSet = false;
+      this.showModal = false;
+    },
+    submitMessage() {
+      // submit message logic here
+      if (!this.localStorageSet) {
+        this.showModal = true;
+      }
+    },
+    handlePromptSubmitted(requestBody) {
+      console.log("Submitting prompt to OpenAI model", requestBody.model);
+    }
+  }
 };
 </script>
-<style></style>
+<style scoped></style>
