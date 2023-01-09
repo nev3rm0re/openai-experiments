@@ -11,6 +11,12 @@
 <script>
 export default {
   name: "Indicator",
+  props: {
+    storageKey: {
+      type: String,
+      default: "API_KEY"
+    }
+  },
   data() {
     return {
       apiKey: "",
@@ -18,7 +24,7 @@ export default {
     };
   },
   created() {
-    this.apiKey = localStorage.getItem("API_KEY");
+    this.apiKey = localStorage.getItem(this.storageKey);
     this.apiKeySet = !!this.apiKey;
   }
 };

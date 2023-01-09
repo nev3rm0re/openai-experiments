@@ -1,123 +1,72 @@
 <template>
-  <div class="app">
-    <header class="navbar is-dark">
-      <key-indicator class="navbar-end" @click="showAPIKeyModal" />
-    </header>
-    <div class="app-body">
-      <aside class="menu">
-        <ul class="menu-list">
-          <li
-            v-for="route in $router.options.routes"
-            :key="route.name"
-            v-if="route.name"
-          >
-            <router-link :to="route.path" class="is-active">{{
-              route.name
-            }}</router-link>
-          </li>
-        </ul>
-      </aside>
-      <main>
-        <router-view />
-      </main>
-    </div>
-    <div v-if="showModal" class="modal-overlay">
-      <div class="modal" :class="{'is-active': showModal}">
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Enter OpenAI API Key</p>
-            <button class="delete" aria-label="close" @click="showModal = false"></button>
-          </header>
-          <section class="modal-card-body">
-            <form @submit.prevent="submitAPIKey">
-              <div class="field">
-                <label class="label" for="api-key-input">API Key</label>
-                <div class="control">
-                  <input class="input" type="text" id="api-key-input" v-model="apiKey" ref="apiKeyInput" />
-                </div>
-              </div>
-            </form>
-          </section>
-          <footer class="modal-card-foot">
-            <button class="button is-primary" type="button" @click="submitAPIKey">Submit</button>
-            <button class="button is-text" type="button" @click="deleteAPIKey">Delete</button>
-          </footer>
-        </div>
-      </div>
-    </div>
-  </div>
+  <el-container>
+    <el-header>
+      <indicator @click="handleOpenApiKeyModal" key="API_KEY" />
+    </el-header>
+    <el-container>
+      <el-aside width="200px">
+        <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleMenuSelect">
+          <el-menu-item v-for="route in routes" :key="route.path" :index="route.path">
+            {{ route.name }}
+          </el-menu-item>
+        </el-menu>
+      </el-aside>
+      <el-container>
+        <el-main>
+          <router-view />
+        </el-main>
+      </el-container>
+    </el-container>
+  </el-container>
 </template>
 <script>
-import KeyIndicator from "./components/KeyIndicator.vue";
+import Indicator from './components/KeyIndicator.vue';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
-    KeyIndicator
+    Indicator,
   },
   data() {
     return {
-      apiKey: "",
-      showModal: false
+      apiKey: '',
     };
   },
+  computed: {
+    routes() {
+      return this.$router.options.routes;
+    },
+  },
   methods: {
-    showAPIKeyModal() {
-      this.apiKey = localStorage.getItem("API_KEY") || "";
-      this.showModal = true;
-      this.$nextTick(() => {
-        this.$refs.apiKeyInput.focus();
+    handleMenuSelect(path) {
+      this.$router.push(path);
+    },
+    handleOpenApiKeyModal(requestBody) {
+      console.log("Calling handleOpenApiKeyModal", requestBody);
+      this.$prompt('Enter API Key', 'API Key', {
+        confirmButtonText: 'Save',
+        cancelButtonText: 'Delete',
+        inputPattern: /^[a-zA-Z0-9-]*$/,
+        inputErrorMessage: 'API Key can only contain letters and numbers',
+      }).then(({ value }) => {
+        localStorage.setItem('API_KEY', value);
+        this.apiKey = value;
+      }).catch(() => {
+        localStorage.removeItem('API_KEY');
+        this.apiKey = '';
       });
     },
-    submitAPIKey() {
-      localStorage.setItem("API_KEY", this.apiKey);
-      this.showModal = false;
-    },
-    deleteAPIKey() {
-      localStorage.removeItem("API_KEY");
-      this.showModal = false;
-    }
   },
   created() {
-    if (!localStorage.getItem("API_KEY")) {
-      this.showAPIKeyModal();
-    }
-  }
+    this.apiKey = localStorage.getItem('apiKey');
+  },
 };
 </script>
+<style src="element-ui/lib/theme-chalk/index.css"></style>
 <style>
-.app {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.app-body {
-  display: flex;
-  height: 100%;
-}
-
-.menu {
-  flex: 0 0 200px;
-  background-color: #333;
-  color: #fff;
-}
-
-.menu-list > li > a {
-  display: block;
-  padding: 20px;
-  font-size: 18px;
-  color: #fff;
-  text-decoration: none;
-}
-
-.menu-list > li > a.is-active {
-  background-color: #444;
-}
-
-main {
-  flex: 1;
-  padding: 20px;
-  background-color: #eee;
+:root {
+  --color-primary: #409EFF;
+  --primary-color: #409EFF;
 }
 </style>
+<style src="element-ui/lib/theme-chalk/display.css"></style>

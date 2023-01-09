@@ -5,9 +5,14 @@ import App from './App'
 import router from './router'
 
 import "font-awesome/css/font-awesome.css";
-import /* bulma */ "bulma/css/bulma.css";
+// import Element UI dark theme
+import "element-ui/lib/theme-chalk/index.css";
+import "element-ui/lib/theme-chalk/display.css";
 
-Vue.config.productionTip = false
+import Element from "element-ui";
+
+Vue.config.productionTip = false;
+Vue.use(Element);
 
 /* eslint-disable no-new */
 new Vue({

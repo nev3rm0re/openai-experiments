@@ -10,12 +10,25 @@
   </div>
 </template>
 
+<template>
+  <el-container>
+    <el-header>
+      <h1>Completion Form</h1>
+    </el-header>
+    <el-main>
+      <completion-form @prompt-submitted="handlePromptSubmitted" />
+    </el-main>
+  </el-container>
+</template>
+
 <script>
-import CompletionsPrompt from "../CompletionsPrompt.vue";
+import CompletionForm from "../CompletionsPrompt.vue";
 
 export default {
   name: "Experiment1",
-  components: {CompletionsPrompt},
+  components: {
+    CompletionForm
+  },
   data() {
     return {
       localStorageSet: false,
@@ -46,9 +59,8 @@ export default {
       }
     },
     handlePromptSubmitted(requestBody) {
-      console.log("Submitting prompt to OpenAI model", requestBody.model);
+      console.log(requestBody);
     }
   }
 };
 </script>
-<style scoped></style>
